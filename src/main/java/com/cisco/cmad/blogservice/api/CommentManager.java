@@ -1,4 +1,4 @@
-package com.cisco.cmad.blogService.api;
+package com.cisco.cmad.blogservice.api;
 
 public interface CommentManager {
 	public Comment addComment(Comment comment) throws InvalidCommentException, CommentException;

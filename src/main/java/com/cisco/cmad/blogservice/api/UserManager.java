@@ -1,4 +1,4 @@
-package com.cisco.cmad.blogService.api;
+package com.cisco.cmad.blogservice.api;
 
 public interface UserManager {
 	public User registerUser(User user)  throws DuplicateUserException, InvalidUserException, UserException;
