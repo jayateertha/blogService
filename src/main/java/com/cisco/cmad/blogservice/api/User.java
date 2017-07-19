@@ -2,6 +2,11 @@ package com.cisco.cmad.blogservice.api;
 
 public class User {
 	private int userId;
+	private String name;
+	private String contactNo;
+	private String emailId;
+	private Blog blog;
+	
 	public int getUserId() {
 		return userId;
 	}
@@ -32,8 +37,5 @@ public class User {
 	public void setBlog(Blog blog) {
 		this.blog = blog;
 	}
-	private String name;
-	private String contactNo;
-	private String emailId;
-	private Blog blog;
+	
 }

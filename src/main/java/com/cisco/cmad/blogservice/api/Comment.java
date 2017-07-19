@@ -3,6 +3,12 @@ package com.cisco.cmad.blogservice.api;
 import java.util.Date;
 
 public class Comment {
+	private int commentId;
+	private String comment;
+	private User user;
+	private Date created;
+	private Date lastModified;
+	
 	public int getCommentId() {
 		return commentId;
 	}
@@ -33,9 +39,5 @@ public class Comment {
 	public void setLastModified(Date lastModified) {
 		this.lastModified = lastModified;
 	}
-	private int commentId;
-	private String comment;
-	private User user;
-	private Date created;
-	private Date lastModified;
+	
 }

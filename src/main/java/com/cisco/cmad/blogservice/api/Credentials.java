@@ -2,6 +2,8 @@ package com.cisco.cmad.blogservice.api;
 
 public class Credentials {
 	private String username;
+	private String password;
+	
 	public String getUsername() {
 		return username;
 	}
@@ -14,5 +16,4 @@ public class Credentials {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	private String password;
 }
