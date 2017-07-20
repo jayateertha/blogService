@@ -1,5 +1,10 @@
 package com.cisco.cmad.blogservice.impl;
 
+import java.util.UUID;
+
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+
 import com.cisco.cmad.blogservice.api.Credentials;
 import com.cisco.cmad.blogservice.api.DuplicateUserException;
 import com.cisco.cmad.blogservice.api.InvalidUserException;
@@ -45,15 +50,33 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	@Override
-	public User login(Credentials credentials) throws InvalidUserException, UserException {
-		
-		return null;
+	public Credentials login(Credentials credentials) throws InvalidUserException, UserException {
+		User user = userDAO.get(credentials.getUsername());
+		Credentials credsWithTocken = null;
+		if (user == null) {
+			throw new InvalidUserException();
+		}
+		if (userDAO.isValid(credentials)) {
+			String tocken = generateTocken();
+			boolean sessionCreated = userDAO.createSession(credentials.getUsername(), tocken);
+			if (sessionCreated) {
+				credsWithTocken = new Credentials();
+				credsWithTocken.setTocken(tocken);
+				credsWithTocken.setUsername(credentials.getUsername());
+			}
+		}
+		return credsWithTocken;
 	}
 
 	@Override
-	public User logout(int userId) throws InvalidUserException, UserException {
-		// TODO Auto-generated method stub
-		return null;
+	public void logout(@Context HttpHeaders httpHeaders, String userId) throws InvalidUserException, UserException {
+		String tocken = httpHeaders.getRequestHeader("tocken").get(0);
+		userDAO.deleteSession(userId, tocken);
+	}
+	
+	private String generateTocken() {
+		return UUID.randomUUID().toString();
+		
 	}
 
 }
