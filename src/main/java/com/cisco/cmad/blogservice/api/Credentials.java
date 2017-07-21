@@ -3,14 +3,7 @@ package com.cisco.cmad.blogservice.api;
 public class Credentials {
 	private String username;
 	private String password;
-	private String tocken;
 	
-	public String getTocken() {
-		return tocken;
-	}
-	public void setTocken(String tocken) {
-		this.tocken = tocken;
-	}
 	public String getUsername() {
 		return username;
 	}

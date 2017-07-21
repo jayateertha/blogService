@@ -9,8 +9,8 @@ public interface UserManager {
 
 	public User updateUser(User user) throws UserNotFoundException, NotAuthorizedException, InvalidUserException, UserException;
 	
-	public Credentials login(Credentials credentials) throws InvalidUserException, UserException;
+	public Session login(Credentials credentials) throws InvalidUserException, UserException;
 	
-	public void logout(HttpHeaders httpHeaders, String userId) throws InvalidUserException, UserException;
+	public void logout(HttpHeaders httpHeaders, int userId) throws InvalidUserException, UserException;
 
 }

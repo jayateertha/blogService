@@ -2,6 +2,7 @@ package com.cisco.cmad.blogservice.impl;
 
 import java.util.UUID;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -9,6 +10,7 @@ import com.cisco.cmad.blogservice.api.Credentials;
 import com.cisco.cmad.blogservice.api.DuplicateUserException;
 import com.cisco.cmad.blogservice.api.InvalidUserException;
 import com.cisco.cmad.blogservice.api.NotAuthorizedException;
+import com.cisco.cmad.blogservice.api.Session;
 import com.cisco.cmad.blogservice.api.User;
 import com.cisco.cmad.blogservice.api.UserException;
 import com.cisco.cmad.blogservice.api.UserManager;
@@ -27,7 +29,7 @@ public class UserManagerImpl implements UserManager {
 			throw new InvalidUserException();
 		}
 		
-		if(userDAO.isExists(user)) {
+		if(userDAO.isExists(user.getEmailId())) {
 			throw new DuplicateUserException();
 		}
 		
@@ -50,28 +52,31 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	@Override
-	public Credentials login(Credentials credentials) throws InvalidUserException, UserException {
+	public Session login(Credentials credentials) throws InvalidUserException, UserException {
 		User user = userDAO.get(credentials.getUsername());
-		Credentials credsWithTocken = null;
-		if (user == null) {
+		
+		if (!userDAO.isExists(credentials.getUsername())) {
 			throw new InvalidUserException();
 		}
+		
+		Session session = null;
 		if (userDAO.isValid(credentials)) {
 			String tocken = generateTocken();
 			boolean sessionCreated = userDAO.createSession(credentials.getUsername(), tocken);
 			if (sessionCreated) {
-				credsWithTocken = new Credentials();
-				credsWithTocken.setTocken(tocken);
-				credsWithTocken.setUsername(credentials.getUsername());
+				session = new Session();
+				session.setTocken(tocken);
+				session.setUserName(credentials.getUsername());
 			}
 		}
-		return credsWithTocken;
+		return session;
 	}
 
 	@Override
-	public void logout(@Context HttpHeaders httpHeaders, String userId) throws InvalidUserException, UserException {
+	public void logout(@Context HttpHeaders httpHeaders, int userId) throws InvalidUserException, UserException {
+		User user = userDAO.get(userId);
 		String tocken = httpHeaders.getRequestHeader("tocken").get(0);
-		userDAO.deleteSession(userId, tocken);
+		userDAO.deleteSession(user.getEmailId(), tocken);
 	}
 	
 	private String generateTocken() {

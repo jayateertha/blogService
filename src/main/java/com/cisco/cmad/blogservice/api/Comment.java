@@ -2,7 +2,14 @@ package com.cisco.cmad.blogservice.api;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+@Entity
 public class Comment {
+	@Id
 	private int commentId;
 	private String data;
 	private User user;
@@ -17,6 +24,7 @@ public class Comment {
 		this.commentId = commentId;
 	}
 
+	@OneToOne(fetch = FetchType.LAZY)
 	public User getUser() {
 		return user;
 	}

@@ -1,11 +1,20 @@
 package com.cisco.cmad.blogservice.api;
 
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+@Entity
 public class User {
+	@Id
 	private int userId;
 	private String name;
 	private String contactNo;
 	private String emailId;
-	private Blog blog;
+	private List<Blog> blogs;
 	
 	public int getUserId() {
 		return userId;
@@ -31,11 +40,14 @@ public class User {
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
 	}
-	public Blog getBlog() {
-		return blog;
+	@OneToMany(fetch = FetchType.LAZY)
+	public List<Blog> getBlogs() {
+		return blogs;
 	}
-	public void setBlog(Blog blog) {
-		this.blog = blog;
+	public void setBlogs(List<Blog> blogs) {
+		this.blogs = blogs;
 	}
+	
+	
 	
 }

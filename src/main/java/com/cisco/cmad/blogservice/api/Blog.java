@@ -3,7 +3,12 @@ package com.cisco.cmad.blogservice.api;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Blog {
+	@Id
 	private int blogId;
 	private String name;
 	private String data;
