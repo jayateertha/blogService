@@ -13,7 +13,7 @@ public class User {
 	private String emailId;
 	private String name;
 	private String contactNo;
-	private List<Blog> blogs;
+	//private List<Blog> blogs;
 	
 	public String getName() {
 		return name;
@@ -33,13 +33,13 @@ public class User {
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
 	}
-	@OneToMany(fetch = FetchType.LAZY)
+/*	@OneToMany(fetch = FetchType.LAZY)
 	public List<Blog> getBlogs() {
 		return blogs;
 	}
 	public void setBlogs(List<Blog> blogs) {
 		this.blogs = blogs;
-	}
+	}*/
 	
 	
 	
