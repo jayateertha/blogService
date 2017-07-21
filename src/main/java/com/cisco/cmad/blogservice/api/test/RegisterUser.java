@@ -15,7 +15,6 @@ public class RegisterUser {
 		
 		UserManager userManager = new UserManagerImpl();
 		User user = new User();
-		user.setUserId(1234);
 		user.setName("Test User");
 		user.setEmailId("test@opendns.com");
 		user.setContactNo("9902257343");

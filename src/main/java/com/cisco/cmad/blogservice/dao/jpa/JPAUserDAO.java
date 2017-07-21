@@ -12,21 +12,14 @@ import com.cisco.cmad.blogservice.dao.api.UserDAO;
 public class JPAUserDAO implements UserDAO {
 
 	private static EntityManagerFactory factory = Persistence.createEntityManagerFactory("blogService");
-	
+
 	@Override
 	public User create(User user) {
 		EntityManager em = factory.createEntityManager();
-		em.getTransaction().begin(); 
+		em.getTransaction().begin();
 		em.persist(user);
 		em.getTransaction().commit();
 		em.close();
-		return user;
-	}
-
-	@Override
-	public User get(int userId) {
-		EntityManager em = factory.createEntityManager();
-		User user = em.find(User.class, userId);
 		return user;
 	}
 
@@ -38,14 +31,19 @@ public class JPAUserDAO implements UserDAO {
 
 	@Override
 	public boolean isExists(String userName) {
-		// TODO Auto-generated method stub
+		EntityManager em = factory.createEntityManager();
+		User user = em.find(User.class, userName);
+		if (user != null) {
+			return true;
+		}
 		return false;
 	}
 
 	@Override
-	public User get(String emailId) {
-		// TODO Auto-generated method stub
-		return null;
+	public User get(String userName) {
+		EntityManager em = factory.createEntityManager();
+		User user = em.find(User.class, userName);
+		return user;
 	}
 
 	@Override
@@ -58,7 +56,7 @@ public class JPAUserDAO implements UserDAO {
 	public boolean isValid(Credentials credentials) {
 		EntityManager em = factory.createEntityManager();
 		Credentials creds = em.find(Credentials.class, credentials.getUsername());
-		if(creds.getPassword().equals(credentials.getPassword())) {
+		if (creds.getPassword().equals(credentials.getPassword())) {
 			return true;
 		}
 		return false;
@@ -67,7 +65,7 @@ public class JPAUserDAO implements UserDAO {
 	@Override
 	public boolean deleteSession(String userName, String tocken) {
 		EntityManager em = factory.createEntityManager();
-		em.getTransaction().begin(); 
+		em.getTransaction().begin();
 		em.remove(getSession(userName));
 		em.getTransaction().commit();
 		em.close();
@@ -80,5 +78,5 @@ public class JPAUserDAO implements UserDAO {
 		Session session = em.find(Session.class, userName);
 		return session;
 	}
-	
+
 }

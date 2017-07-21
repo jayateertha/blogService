@@ -11,6 +11,6 @@ public interface UserManager {
 	
 	public Session login(Credentials credentials) throws InvalidUserException, UserException;
 	
-	public void logout(HttpHeaders httpHeaders, int userId) throws InvalidUserException, UserException;
+	public void logout(HttpHeaders httpHeaders, String userId) throws InvalidUserException, UserException;
 
 }

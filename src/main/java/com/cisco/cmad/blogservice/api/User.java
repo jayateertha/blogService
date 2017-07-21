@@ -10,18 +10,11 @@ import javax.persistence.OneToMany;
 @Entity
 public class User {
 	@Id
-	private int userId;
+	private String emailId;
 	private String name;
 	private String contactNo;
-	private String emailId;
 	private List<Blog> blogs;
 	
-	public int getUserId() {
-		return userId;
-	}
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
 	public String getName() {
 		return name;
 	}

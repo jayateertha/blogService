@@ -53,7 +53,6 @@ public class UserManagerImpl implements UserManager {
 
 	@Override
 	public Session login(Credentials credentials) throws InvalidUserException, UserException {
-		User user = userDAO.get(credentials.getUsername());
 		
 		if (!userDAO.isExists(credentials.getUsername())) {
 			throw new InvalidUserException();
@@ -73,7 +72,7 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	@Override
-	public void logout(@Context HttpHeaders httpHeaders, int userId) throws InvalidUserException, UserException {
+	public void logout(@Context HttpHeaders httpHeaders, String userId) throws InvalidUserException, UserException {
 		User user = userDAO.get(userId);
 		String tocken = httpHeaders.getRequestHeader("tocken").get(0);
 		userDAO.deleteSession(user.getEmailId(), tocken);
