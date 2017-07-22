@@ -9,9 +9,8 @@ public interface UserDAO {
 	public User get(String emailId);
 	public User update(User user);
 	public boolean isExists(String userName);
-	public boolean createSession(String userName, String tocken);
+	public boolean createSession(Session session);
 	public boolean isValid(Credentials credentials);
-	public boolean deleteSession(String userName, String tocken);
-	public Session getSession(String userName);
+	public boolean deleteSession(String userId);
 	
 }

@@ -33,6 +33,7 @@ public class JPAUserDAO implements UserDAO {
 	public boolean isExists(String userName) {
 		EntityManager em = factory.createEntityManager();
 		User user = em.find(User.class, userName);
+		em.close();
 		if (user != null) {
 			return true;
 		}
@@ -43,19 +44,25 @@ public class JPAUserDAO implements UserDAO {
 	public User get(String userName) {
 		EntityManager em = factory.createEntityManager();
 		User user = em.find(User.class, userName);
+		em.close();
 		return user;
 	}
 
 	@Override
-	public boolean createSession(String userName, String tocken) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean createSession(Session session) {
+		EntityManager em = factory.createEntityManager();
+		em.getTransaction().begin();
+		em.persist(session);
+		em.getTransaction().commit();
+		em.close();
+		return true;
 	}
 
 	@Override
 	public boolean isValid(Credentials credentials) {
 		EntityManager em = factory.createEntityManager();
 		Credentials creds = em.find(Credentials.class, credentials.getUsername());
+		em.close();
 		if (creds.getPassword().equals(credentials.getPassword())) {
 			return true;
 		}
@@ -63,20 +70,16 @@ public class JPAUserDAO implements UserDAO {
 	}
 
 	@Override
-	public boolean deleteSession(String userName, String tocken) {
+	public boolean deleteSession(String userId) {
 		EntityManager em = factory.createEntityManager();
-		em.getTransaction().begin();
-		em.remove(getSession(userName));
-		em.getTransaction().commit();
+		Session session = (Session) em.find(Session.class, userId);
+		if (session != null) {
+			em.getTransaction().begin();
+			em.remove(session);
+			em.getTransaction().commit();
+		}
 		em.close();
 		return true;
-	}
-
-	@Override
-	public Session getSession(String userName) {
-		EntityManager em = factory.createEntityManager();
-		Session session = em.find(Session.class, userName);
-		return session;
 	}
 
 }

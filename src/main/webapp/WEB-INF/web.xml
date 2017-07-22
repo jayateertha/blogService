@@ -8,12 +8,12 @@
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>com.glarimy.cmad.rs</param-value>
+			<param-value>com.cisco.cmad.blogservice.rs</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>blogService</servlet-name>
-		<url-pattern>/library/*</url-pattern>
+		<url-pattern>/blogit/*</url-pattern>
 	</servlet-mapping>
 </web-app>

@@ -12,6 +12,6 @@ public interface UserManager {
 	
 	public Response login(Credentials credentials) throws InvalidUserException, UserException;
 	
-	public Response logout(HttpHeaders httpHeaders, String userId) throws InvalidUserException, UserException;
+	public Response logout(HttpHeaders httpHeaders, Credentials credentials) throws InvalidUserException, UserException;
 
 }

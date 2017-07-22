@@ -37,25 +37,31 @@ public class UserManagerImpl {
 	public Session login(Credentials credentials) throws InvalidUserException, UserException {
 
 		if (!userDAO.isExists(credentials.getUsername())) {
+			System.out.println("User Does not exists");
 			throw new InvalidUserException();
 		}
 
 		Session session = null;
 		if (userDAO.isValid(credentials)) {
 			String tocken = generateTocken();
-			boolean sessionCreated = userDAO.createSession(credentials.getUsername(), tocken);
+			session = new Session();
+			session.setTocken(tocken);
+			session.setUserName(credentials.getUsername());
+			boolean sessionCreated = userDAO.createSession(session);
 			if (sessionCreated) {
-				session = new Session();
-				session.setTocken(tocken);
-				session.setUserName(credentials.getUsername());
+				return session;
+			} else {
+				throw new UserException();
 			}
+		} else {
+			System.out.println("Auth failed");
+			throw new InvalidUserException();
 		}
-		return session;
+		
 	}
 
 	public void logout(String tocken, String userId) throws InvalidUserException, UserException {
-		User user = userDAO.get(userId);
-		userDAO.deleteSession(user.getEmailId(), tocken);
+		userDAO.deleteSession(userId);
 	}
 
 	private String generateTocken() {

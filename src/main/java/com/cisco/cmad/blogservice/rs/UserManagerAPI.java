@@ -1,5 +1,6 @@
 package com.cisco.cmad.blogservice.rs;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -29,10 +30,12 @@ public class UserManagerAPI implements UserManager {
 	@Override
 	public Response registerUser(User user) throws DuplicateUserException, InvalidUserException, UserException {
 		User createdUser = null;
+		
 		try {
 			createdUser = userMgrImpl.register(user);
-		} catch (Exception e) {
-			return Response.status(500).build();
+		} catch (DuplicateUserException due) {
+			due.printStackTrace();
+			return Response.status(409).build();
 		}
 
 		return Response.status(200).entity(createdUser).build();
@@ -52,22 +55,32 @@ public class UserManagerAPI implements UserManager {
 		return null;
 	}
 
+	@POST
+	@Path("/login")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Override
 	public Response login(Credentials credentials) throws InvalidUserException, UserException {
 
 		Session session = null;
 		try {
+			System.out.println("name:" + credentials.getUsername() + " Pass:" + credentials.getPassword());
 			session = userMgrImpl.login(credentials);
-		} catch (Exception e) {
+		} catch (InvalidUserException iue) {
+			return Response.status(401).build();
+		} catch (UserException ue) {
+			ue.printStackTrace();
 			return Response.status(500).build();
 		}
 		return Response.status(200).entity(session).build();
 	}
 
+	@DELETE
+	@Path("/logout")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Override
-	public Response logout(@Context HttpHeaders httpHeaders, String userId) throws InvalidUserException, UserException {
+	public Response logout(@Context HttpHeaders httpHeaders, Credentials credentials) throws InvalidUserException, UserException {
 		String tocken = httpHeaders.getRequestHeader("tocken").get(0);
-		userMgrImpl.logout(tocken, userId);
+		userMgrImpl.logout(tocken, credentials.getUsername());
 		return Response.status(200).build();
 	}
 

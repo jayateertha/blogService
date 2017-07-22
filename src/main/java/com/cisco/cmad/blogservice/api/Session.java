@@ -7,7 +7,9 @@ import javax.persistence.Id;
 public class Session {
 	@Id
 	private String userName;
+	
 	private String tocken;
+	
 	public String getUserName() {
 		return userName;
 	}
