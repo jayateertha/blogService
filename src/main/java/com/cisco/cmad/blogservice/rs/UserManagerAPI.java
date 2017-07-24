@@ -21,14 +21,13 @@ import com.cisco.cmad.blogservice.api.UserNotFoundException;
 import com.cisco.cmad.blogservice.impl.UserManagerImpl;
 
 @Path("/user")
-public class UserManagerAPI implements UserManager {
+public class UserManagerAPI {
 
 	UserManagerImpl userMgrImpl = new UserManagerImpl();
 
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@Override
-	public Response registerUser(User user) throws DuplicateUserException, InvalidUserException, UserException {
+	public Response registerUser(User user) {
 		User createdUser = null;
 		
 		try {
@@ -42,15 +41,14 @@ public class UserManagerAPI implements UserManager {
 
 	}
 
-	@Override
-	public Response getUser(int userId) throws UserNotFoundException, UserException {
+
+	public Response getUser(int userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public Response updateUser(User user)
-			throws UserNotFoundException, NotAuthorizedException, InvalidUserException, UserException {
+
+	public Response updateUser(User user) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -58,8 +56,8 @@ public class UserManagerAPI implements UserManager {
 	@POST
 	@Path("/login")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@Override
-	public Response login(Credentials credentials) throws InvalidUserException, UserException {
+
+	public Response login(Credentials credentials) {
 
 		Session session = null;
 		try {
@@ -77,10 +75,10 @@ public class UserManagerAPI implements UserManager {
 	@DELETE
 	@Path("/logout")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@Override
-	public Response logout(@Context HttpHeaders httpHeaders, Credentials credentials) throws InvalidUserException, UserException {
+
+	public Response logout(@Context HttpHeaders httpHeaders, Credentials credentials) {
 		String tocken = httpHeaders.getRequestHeader("tocken").get(0);
-		userMgrImpl.logout(tocken, credentials.getUsername());
+		userMgrImpl.logout(tocken, credentials);
 		return Response.status(200).build();
 	}
 
