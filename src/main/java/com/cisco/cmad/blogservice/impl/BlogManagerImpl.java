@@ -14,8 +14,16 @@ public class BlogManagerImpl implements BlogManager {
 
 	BlogDAO blogDAO = new JPABlogDAO();
 	
+	
 	@Override
 	public Blog createBlog(Blog blog) throws DuplicateBlogException, InvalidBlogException, BlogException {
+		if(blog == null) {
+			throw new InvalidBlogException();
+		}
+		if(((blog.getData() == null) || (blog.getData().trim().isEmpty())) || ((blog.getName() == null) || (blog.getName().trim().isEmpty()))) {
+			throw new InvalidBlogException();
+		}
+		
 		Blog createdBlog = blogDAO.create(blog);
 		return createdBlog;
 	}

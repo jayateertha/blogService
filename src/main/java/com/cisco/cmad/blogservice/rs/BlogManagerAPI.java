@@ -8,24 +8,25 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.cisco.cmad.blogservice.api.Blog;
+import com.cisco.cmad.blogservice.api.BlogManager;
 import com.cisco.cmad.blogservice.impl.BlogManagerImpl;
 
 @Path("/blog")
 public class BlogManagerAPI {
 
-	BlogManagerImpl blogManagerImpl = new BlogManagerImpl();
+	BlogManager blogManager = new BlogManagerImpl();
 	
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response createBlog(Blog blog) {
-		Blog createdBlog = blogManagerImpl.createBlog(blog);
+		Blog createdBlog = blogManager.createBlog(blog);
 		return Response.status(200).entity(createdBlog).build();
 	}
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getBlog(int blogId) {
-		Blog blog = blogManagerImpl.getBlog(blogId);
+		Blog blog = blogManager.getBlog(blogId);
 		return Response.status(200).entity(blog).build();
 	}
 

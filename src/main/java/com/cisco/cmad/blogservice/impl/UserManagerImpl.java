@@ -2,9 +2,6 @@ package com.cisco.cmad.blogservice.impl;
 
 import java.util.UUID;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-
 import com.cisco.cmad.blogservice.api.Credentials;
 import com.cisco.cmad.blogservice.api.DuplicateUserException;
 import com.cisco.cmad.blogservice.api.InvalidUserException;
@@ -72,15 +69,17 @@ public class UserManagerImpl implements UserManager {
 
 	}
 	@Override
-	public User getUser(int userId) throws UserNotFoundException, UserException {
-		// TODO Auto-generated method stub
-		return null;
+	public User getUser(String userId) throws UserNotFoundException, UserException {
+		User user = userDAO.get(userId);
+		return user;
 	}
 	@Override
 	public User updateUser(User user)
 			throws UserNotFoundException, NotAuthorizedException, InvalidUserException, UserException {
-		// TODO Auto-generated method stub
-		return null;
+		User existingUser = userDAO.get(user.getEmailId());
+		existingUser.setContactNo(user.getContactNo());
+		userDAO.create(user);
+		return existingUser;
 	}
 
 	
