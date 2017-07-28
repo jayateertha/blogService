@@ -43,7 +43,7 @@ public class UserManagerImpl implements UserManager {
 	public Session login(Credentials credentials) throws InvalidUserException, UserException {
 		try {
 
-			if (!userDAO.isExists(credentials.getUsername())) {
+			if (!userDAO.isExists(credentials.getEmailId())) {
 				System.out.println("User Does not exists");
 				throw new InvalidUserException();
 			}
@@ -53,7 +53,7 @@ public class UserManagerImpl implements UserManager {
 				String tocken = generateTocken();
 				session = new Session();
 				session.setTocken(tocken);
-				session.setUserName(credentials.getUsername());
+				session.setUserName(credentials.getEmailId());
 				boolean sessionCreated = userDAO.createSession(session);
 				if (sessionCreated) {
 					return session;
@@ -74,14 +74,14 @@ public class UserManagerImpl implements UserManager {
 	public void logout(String tocken, Credentials credentials)
 			throws InvalidUserException, NotAuthorizedException, UserException {
 		try {
-			Session session = userDAO.getSession(credentials.getUsername());
+			Session session = userDAO.getSession(credentials.getEmailId());
 			if ((session == null) || (!session.getTocken().equals(tocken))) {
 				throw new NotAuthorizedException();
 			}
-			if (credentials.getUsername().isEmpty()) {
+			if (credentials.getEmailId().isEmpty()) {
 				throw new InvalidUserException();
 			}
-			userDAO.deleteSession(credentials.getUsername());
+			userDAO.deleteSession(credentials.getEmailId());
 		} catch (Exception e) {
 			throw new UserException();
 		}
@@ -98,7 +98,10 @@ public class UserManagerImpl implements UserManager {
 			throws UserNotFoundException, NotAuthorizedException, UserException {
 		User user = null;
 		try {
+			System.out.println("userId:" + userId);
 			Session session = userDAO.getSession(userId);
+			System.out.println("tocken:" + tocken);
+			System.out.println("Session:" + session);
 			if ((session == null) || (!session.getTocken().equals(tocken))) {
 				throw new NotAuthorizedException();
 			}
@@ -107,6 +110,7 @@ public class UserManagerImpl implements UserManager {
 				throw new UserNotFoundException();
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new UserException();
 		}
 
@@ -128,7 +132,7 @@ public class UserManagerImpl implements UserManager {
 			throw new UserNotFoundException();
 		}
 		existingUser.setContactNo(user.getContactNo());
-		userDAO.create(user);
+		userDAO.update(user);
 		return existingUser;
 	}
 

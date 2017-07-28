@@ -25,8 +25,12 @@ public class JPAUserDAO implements UserDAO {
 
 	@Override
 	public User update(User user) {
-		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = factory.createEntityManager();
+		em.getTransaction().begin();
+		em.merge(user);
+		em.getTransaction().commit();
+		em.close();
+		return user;
 	}
 
 	@Override
@@ -69,7 +73,7 @@ public class JPAUserDAO implements UserDAO {
 	@Override
 	public boolean isValid(Credentials credentials) {
 		EntityManager em = factory.createEntityManager();
-		Credentials creds = em.find(Credentials.class, credentials.getUsername());
+		Credentials creds = em.find(Credentials.class, credentials.getEmailId());
 		em.close();
 		if (creds.getPassword().equals(credentials.getPassword())) {
 			return true;

@@ -6,6 +6,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -26,6 +27,7 @@ import com.cisco.cmad.blogservice.impl.UserManagerImpl;
 public class UserManagerAPI {
 
 	UserManager userMgr = new UserManagerImpl();
+
 
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -48,10 +50,13 @@ public class UserManagerAPI {
 		return Response.status(200).entity(createdUser).build();
 
 	}
-
+	
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response getUser(@Context HttpHeaders httpHeaders, String userId) {
+	public Response getUser(@Context HttpHeaders httpHeaders, @QueryParam("userId") String userId) {
+		if(httpHeaders.getRequestHeader("tocken") == null) {
+			return Response.status(401).build();
+		}
 		String tocken = httpHeaders.getRequestHeader("tocken").get(0);
 		User user = null;
 		try {
@@ -93,6 +98,7 @@ public class UserManagerAPI {
 		return Response.status(200).entity(updateUser).build();
 	}
 
+
 	@POST
 	@Path("/login")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -110,6 +116,7 @@ public class UserManagerAPI {
 		}
 		return Response.status(200).entity(session).build();
 	}
+
 
 	@DELETE
 	@Path("/logout")
