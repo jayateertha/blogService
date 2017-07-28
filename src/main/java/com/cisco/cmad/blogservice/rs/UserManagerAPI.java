@@ -1,7 +1,9 @@
 package com.cisco.cmad.blogservice.rs;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -23,34 +25,72 @@ import com.cisco.cmad.blogservice.impl.UserManagerImpl;
 @Path("/user")
 public class UserManagerAPI {
 
-	UserManagerImpl userMgrImpl = new UserManagerImpl();
+	UserManager userMgr = new UserManagerImpl();
 
 	@POST
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response registerUser(User user) {
 		User createdUser = null;
-		
+
 		try {
-			createdUser = userMgrImpl.register(user);
+			createdUser = userMgr.register(user);
 		} catch (DuplicateUserException due) {
 			due.printStackTrace();
 			return Response.status(409).build();
+		} catch (InvalidUserException iu) {
+			iu.printStackTrace();
+			return Response.status(422).build();
+		} catch (UserException ue) {
+			ue.printStackTrace();
+			return Response.status(500).build();
 		}
 
 		return Response.status(200).entity(createdUser).build();
 
 	}
 
+	@GET
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getUser(@Context HttpHeaders httpHeaders, String userId) {
+		String tocken = httpHeaders.getRequestHeader("tocken").get(0);
+		User user = null;
+		try {
+			user = userMgr.getUser(tocken, userId);
+		} catch (UserNotFoundException unf) {
+			unf.printStackTrace();
+			return Response.status(404).build();
+		} catch (NotAuthorizedException nae) {
+			nae.printStackTrace();
+			return Response.status(401).build();
+		} catch (UserException ue) {
+			ue.printStackTrace();
+			return Response.status(500).build();
+		}
 
-	public Response getUser(int userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return Response.status(200).entity(user).build();
 	}
 
+	@PUT
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response updateUser(@Context HttpHeaders httpHeaders, User user) {
+		String tocken = httpHeaders.getRequestHeader("tocken").get(0);
+		User updateUser = null;
+		try {
+			updateUser = userMgr.updateUser(tocken, user);
+		} catch (InvalidUserException iu) {
+			iu.printStackTrace();
+			return Response.status(422).build();
+		} catch (UserNotFoundException unf) {
+			unf.printStackTrace();
+			return Response.status(404).build();
+		} catch (NotAuthorizedException nae) {
+			nae.printStackTrace();
+			return Response.status(401).build();
+		} catch (UserException ue) {
+			return Response.status(500).build();
+		}
 
-	public Response updateUser(User user) {
-		// TODO Auto-generated method stub
-		return null;
+		return Response.status(200).entity(updateUser).build();
 	}
 
 	@POST
@@ -61,8 +101,7 @@ public class UserManagerAPI {
 
 		Session session = null;
 		try {
-			System.out.println("name:" + credentials.getUsername() + " Pass:" + credentials.getPassword());
-			session = userMgrImpl.login(credentials);
+			session = userMgr.login(credentials);
 		} catch (InvalidUserException iue) {
 			return Response.status(401).build();
 		} catch (UserException ue) {
@@ -77,8 +116,19 @@ public class UserManagerAPI {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
 	public Response logout(@Context HttpHeaders httpHeaders, Credentials credentials) {
-		String tocken = httpHeaders.getRequestHeader("tocken").get(0);
-		userMgrImpl.logout(tocken, credentials);
+		try {
+			String tocken = httpHeaders.getRequestHeader("tocken").get(0);
+			userMgr.logout(tocken, credentials);
+		} catch (NotAuthorizedException nae) {
+			nae.printStackTrace();
+			return Response.status(401).build();
+		} catch (InvalidUserException iue) {
+			return Response.status(401).build();
+		} catch (UserException ue) {
+			ue.printStackTrace();
+			return Response.status(500).build();
+		}
+
 		return Response.status(200).build();
 	}
 

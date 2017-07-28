@@ -12,5 +12,6 @@ public interface UserDAO {
 	public boolean createSession(Session session);
 	public boolean isValid(Credentials credentials);
 	public boolean deleteSession(String userId);
+	public Session getSession(String emailId);
 	
 }

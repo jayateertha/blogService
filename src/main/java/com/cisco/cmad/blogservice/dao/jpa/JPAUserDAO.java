@@ -49,6 +49,14 @@ public class JPAUserDAO implements UserDAO {
 	}
 
 	@Override
+	public Session getSession(String userName) {
+		EntityManager em = factory.createEntityManager();
+		Session session = em.find(Session.class, userName);
+		em.close();
+		return session;
+	}
+
+	@Override
 	public boolean createSession(Session session) {
 		EntityManager em = factory.createEntityManager();
 		em.getTransaction().begin();
