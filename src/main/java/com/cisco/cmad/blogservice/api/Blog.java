@@ -10,9 +10,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 @Entity
+@NamedQuery(
+	    name="findAllBlogs",
+	    query="SELECT blog FROM Blog blog order by blog.blogId desc"
+	)
+/*@NamedQuery(
+	    name="findBlogsByFilter",
+	    query="SELECT blog FROM Blog blog WHERE blog.name like :blogName order by blog.blogId desc"
+	)*/
 public class Blog {
 	@Id
 	@GeneratedValue
