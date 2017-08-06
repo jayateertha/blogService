@@ -66,7 +66,7 @@ public class BlogManagerAPI {
 		return Response.status(200).entity(blog).build();
 	}
 
-	@PUT
+/*	@PUT
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updateBlog(@Context HttpHeaders httpHeaders,Blog blog) {
 		Blog updatedBlog = null;
@@ -87,7 +87,7 @@ public class BlogManagerAPI {
 		}
 		return Response.status(200).entity(updatedBlog).build();
 	}
-
+*/
 	@DELETE
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Path("/{blogId}")

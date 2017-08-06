@@ -60,7 +60,7 @@ public class BlogManagerImpl implements BlogManager {
 		
 		return blog;
 	}
-
+/*
 	@Override
 	public Blog updateBlog(String userId, String tocken, Blog blog)
 			throws BlogNotFoundException, NotAuthorizedException, InvalidBlogException, BlogException {
@@ -93,7 +93,7 @@ public class BlogManagerImpl implements BlogManager {
 
 		return updatedBlog;
 	}
-
+*/
 	@Override
 	public void deleteBlog(String userId, String tocken, int blogId) throws BlogNotFoundException, NotAuthorizedException, BlogException {
 		try {
