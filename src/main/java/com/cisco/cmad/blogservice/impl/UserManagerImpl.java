@@ -130,33 +130,14 @@ public class UserManagerImpl implements UserManager {
 		if (existingUser == null) {
 			throw new UserNotFoundException();
 		}
-		existingUser.setContactNo(user.getContactNo());
-		userDAO.update(user);
-		return existingUser;
-	}
-	
-/*	@Override
-	public User getUser(String tocken)
-			throws UserNotFoundException, NotAuthorizedException, UserException {
-		User user = null;
 		try {
-			
-			Session session = UserManagerImpl.sessionMap.get(tocken);
-		
-			if ((session == null) || (!session.getTocken().equals(tocken))) {
-				throw new NotAuthorizedException();
-			}
-			System.out.println("#################" + session.getUserName());
-			user = userDAO.get(session.getUserName());
-			if (user == null) {
-				throw new UserNotFoundException();
-			}
+			existingUser.setContactNo(user.getContactNo());
+			userDAO.update(user);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new UserException();
 		}
-
+		
 		return user;
-	}*/
+	}
 
 }

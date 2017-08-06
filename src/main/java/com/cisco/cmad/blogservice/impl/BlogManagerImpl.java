@@ -21,7 +21,7 @@ public class BlogManagerImpl implements BlogManager {
 	 UserManager userManager = new UserManagerImpl();
 
 	@Override
-	public Blog createBlog(String userId, String tocken, Blog blog) throws DuplicateBlogException, InvalidBlogException, BlogException {
+	public Blog createBlog(String userId, String tocken, Blog blog) throws NotAuthorizedException, InvalidBlogException, BlogException {
 		if (blog == null) {
 			throw new InvalidBlogException();
 		}
@@ -60,40 +60,7 @@ public class BlogManagerImpl implements BlogManager {
 		
 		return blog;
 	}
-/*
-	@Override
-	public Blog updateBlog(String userId, String tocken, Blog blog)
-			throws BlogNotFoundException, NotAuthorizedException, InvalidBlogException, BlogException {
-		if (blog == null) {
-			throw new InvalidBlogException();
-		}
-		if (((blog.getData() == null) || (blog.getData().trim().isEmpty()))
-				|| ((blog.getName() == null) || (blog.getName().trim().isEmpty()))) {
-			throw new InvalidBlogException();
-		}
-		Blog existingBlog = blogDAO.get(blog.getBlogId());
-		if(existingBlog == null) {
-			throw new BlogNotFoundException();
-		}
-		Blog updatedBlog = null;
-		User user = userManager.getUser(tocken, userId);
-		if (user == null) {
-			throw new NotAuthorizedException();
-		}
-		try {
-			existingBlog.setLastModifed(new Date());
-			existingBlog.setData(blog.getData());
-			existingBlog.setName(blog.getName());
-			updatedBlog = blogDAO.update(existingBlog);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new BlogException();
-		}
 
-		return updatedBlog;
-	}
-*/
 	@Override
 	public void deleteBlog(String userId, String tocken, int blogId) throws BlogNotFoundException, NotAuthorizedException, BlogException {
 		try {
