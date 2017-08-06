@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Comment {
@@ -18,15 +18,16 @@ public class Comment {
 	
 	private String data;
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="emailId", nullable=false)
 	private User user;
 	
 	@Column(updatable = false, nullable=false)
 	private Date created;
 	
-	@Column(nullable=false)
-	private Date lastModified;
+	@ManyToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name="blogId", nullable=false)
+	private Blog blog;
 
 	public int getCommentId() {
 		return commentId;
@@ -53,19 +54,19 @@ public class Comment {
 		this.created = created;
 	}
 
-	public Date getLastModified() {
-		return lastModified;
-	}
-
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
-
 	public String getData() {
 		return data;
 	}
 
 	public void setData(String data) {
 		this.data = data;
+	}
+
+	public Blog getBlog() {
+		return blog;
+	}
+
+	public void setBlog(Blog blog) {
+		this.blog = blog;
 	}
 }

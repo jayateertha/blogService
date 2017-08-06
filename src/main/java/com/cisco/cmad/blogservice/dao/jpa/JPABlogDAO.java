@@ -1,24 +1,24 @@
 package com.cisco.cmad.blogservice.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
 
 import com.cisco.cmad.blogservice.api.Blog;
 import com.cisco.cmad.blogservice.dao.api.BlogDAO;
 
 public class JPABlogDAO implements BlogDAO {
 
-	private static EntityManagerFactory factory = Persistence.createEntityManagerFactory("blogService");
+	private EntityManagerFactory factory = JPAEntityManager.getInstance();
 
 	@Override
 	public Blog create(Blog blog) {
 		EntityManager em = factory.createEntityManager();
 		em.getTransaction().begin();
 		em.persist(blog);
+
 		em.getTransaction().commit();
 		em.close();
 		return blog;
@@ -44,13 +44,48 @@ public class JPABlogDAO implements BlogDAO {
 
 	@Override
 	public void delete(Blog blog) {
-		// TODO Auto-generated method stub
+		EntityManager em = factory.createEntityManager();
+		Blog existingBlog = (Blog) em.find(Blog.class, blog.getBlogId());
+		if (existingBlog != null) {
+			em.getTransaction().begin();
+			em.remove(blog);
+			em.getTransaction().commit();
+		}
+		em.close();
 
 	}
 
 	@Override
 	public List<Blog> getMultiple(String filter, int index, int count) {
-		int startCount = count * (index - 1);
+		List<Blog> resultBLog = null;
+		boolean needMoreBlogs = false;
+		int blogCount = 0;
+		if ((filter == null) || filter.trim().isEmpty()) {
+			System.out.println("GetMultiple: index:");
+			resultBLog = queryBlogs(index, count);
+		} else {
+			resultBLog = new ArrayList<Blog>();
+			do {
+				List<Blog> tempList = queryBlogs(index, count);
+				for (Blog blog : tempList) {
+					if (blog.getName().contains(filter)) {
+						resultBLog.add(blog);
+						blogCount++;
+						if ((blogCount == count)) {
+							needMoreBlogs = false;
+							break;
+						}
+					}
+				}
+
+			} while (needMoreBlogs);
+		}
+		return resultBLog;
+	}
+
+	private List<Blog> queryBlogs(int index, int count) {
+		List<Blog> blogs = null;
+		int startCount = count * index;
 		if (startCount < 0) {
 			startCount = 0;
 		}
@@ -58,7 +93,7 @@ public class JPABlogDAO implements BlogDAO {
 			count = 0;
 		}
 		EntityManager em = factory.createEntityManager();
-		List<Blog> blogs = null;
+
 		blogs = em.createNamedQuery("findAllBlogs", Blog.class).setMaxResults(startCount + count)
 				.setFirstResult(startCount).getResultList();
 		return blogs;

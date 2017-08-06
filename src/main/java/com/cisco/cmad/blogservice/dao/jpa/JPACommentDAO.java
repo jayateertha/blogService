@@ -1,38 +1,45 @@
 package com.cisco.cmad.blogservice.dao.jpa;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
 import com.cisco.cmad.blogservice.api.Comment;
 import com.cisco.cmad.blogservice.dao.api.CommentDAO;
 
 public class JPACommentDAO implements CommentDAO {
 
+	private EntityManagerFactory factory = JPAEntityManager.getInstance();
+	
 	@Override
 	public Comment create(Comment comment) {
-		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = factory.createEntityManager();
+		em.getTransaction().begin();
+		em.persist(comment);
+		em.getTransaction().commit();
+		em.close();
+		return comment;
 	}
 
 	@Override
 	public Comment get(int commentId) {
-		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = factory.createEntityManager();
+		Comment comment = em.find(Comment.class, commentId);
+		em.close();
+		return comment;
 	}
 
-	@Override
-	public Comment update(Comment comment) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void delete(int commentId) {
-		// TODO Auto-generated method stub
+		EntityManager em = factory.createEntityManager();
+		Comment existingComment = (Comment) em.find(Comment.class, commentId);
+		if (existingComment != null) {
+			em.getTransaction().begin();
+			em.remove(existingComment);
+			em.getTransaction().commit();
+		}
+		em.close();
 		
-	}
-
-	@Override
-	public Comment[] getMultiple(String filter, int index, int count) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 }

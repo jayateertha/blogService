@@ -12,4 +12,6 @@ public interface UserManager {
 
 	public void logout(String tocken, Credentials credentials) throws InvalidUserException, UserException;
 
+//	User getUser(String tocken) throws UserNotFoundException, NotAuthorizedException, UserException;
+
 }

@@ -18,10 +18,6 @@ import javax.persistence.OneToMany;
 	    name="findAllBlogs",
 	    query="SELECT blog FROM Blog blog order by blog.blogId desc"
 	)
-/*@NamedQuery(
-	    name="findBlogsByFilter",
-	    query="SELECT blog FROM Blog blog WHERE blog.name like :blogName order by blog.blogId desc"
-	)*/
 public class Blog {
 	@Id
 	@GeneratedValue
@@ -31,12 +27,12 @@ public class Blog {
 	private String name;
 	
 	private String data;
-
-	@ManyToOne(cascade=CascadeType.ALL)
+	
+	@ManyToOne
 	@JoinColumn(name="emailId", nullable=false)
 	private User user;
 	
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany
 	@JoinColumn(name="commentId", nullable=true)
 	private List<Comment> comments;
 	
@@ -69,7 +65,6 @@ public class Blog {
 	public void setData(String data) {
 		this.data = data;
 	}
-
 	
 	public User getUser() {
 		return user;
@@ -102,5 +97,4 @@ public class Blog {
 	public void setLastModifed(Date lastModifed) {
 		this.lastModifed = lastModifed;
 	}
-
 }
