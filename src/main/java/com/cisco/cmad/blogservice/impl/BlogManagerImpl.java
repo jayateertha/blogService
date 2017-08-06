@@ -1,5 +1,8 @@
 package com.cisco.cmad.blogservice.impl;
 
+import java.util.Date;
+import java.util.List;
+
 import com.cisco.cmad.blogservice.api.Blog;
 import com.cisco.cmad.blogservice.api.BlogException;
 import com.cisco.cmad.blogservice.api.BlogManager;
@@ -7,56 +10,86 @@ import com.cisco.cmad.blogservice.api.BlogNotFoundException;
 import com.cisco.cmad.blogservice.api.DuplicateBlogException;
 import com.cisco.cmad.blogservice.api.InvalidBlogException;
 import com.cisco.cmad.blogservice.api.NotAuthorizedException;
+import com.cisco.cmad.blogservice.api.User;
+import com.cisco.cmad.blogservice.api.UserManager;
 import com.cisco.cmad.blogservice.dao.api.BlogDAO;
 import com.cisco.cmad.blogservice.dao.jpa.JPABlogDAO;
 
 public class BlogManagerImpl implements BlogManager {
 
-	BlogDAO blogDAO = new JPABlogDAO();
-	
-	
+	 BlogDAO blogDAO = new JPABlogDAO();
+	 UserManager userManager = new UserManagerImpl();
+
 	@Override
-	public Blog createBlog(Blog blog) throws DuplicateBlogException, InvalidBlogException, BlogException {
-		if(blog == null) {
+	public Blog createBlog(String userId, String tocken, Blog blog) throws NotAuthorizedException, InvalidBlogException, BlogException {
+		if (blog == null) {
 			throw new InvalidBlogException();
 		}
-		if(((blog.getData() == null) || (blog.getData().trim().isEmpty())) || ((blog.getName() == null) || (blog.getName().trim().isEmpty()))) {
+		if (((blog.getData() == null) || (blog.getData().trim().isEmpty()))
+				|| ((blog.getName() == null) || (blog.getName().trim().isEmpty()))) {
 			throw new InvalidBlogException();
 		}
-		
-		Blog createdBlog = blogDAO.create(blog);
+		Blog createdBlog = null;
+		try {
+			User user = userManager.getUser(tocken, userId);
+			if (user == null) {
+				throw new NotAuthorizedException();
+			}
+			blog.setCreated(new Date());
+			blog.setLastModifed(new Date());
+			blog.setUser(user);
+			createdBlog = blogDAO.create(blog);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BlogException();
+		}
+
 		return createdBlog;
 	}
 
 	@Override
 	public Blog getBlog(int blogId) throws BlogNotFoundException, BlogException {
-		Blog blog = blogDAO.get(blogId);
+		Blog blog = null;
+		try {
+			blog = blogDAO.get(blogId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BlogException();
+		}
+		
+		
 		return blog;
 	}
 
 	@Override
-	public Blog updateBlog(Blog blog)
-			throws BlogNotFoundException, NotAuthorizedException, InvalidBlogException, BlogException {
-		// TODO Auto-generated method stub
-		return null;
+	public void deleteBlog(String userId, String tocken, int blogId) throws BlogNotFoundException, NotAuthorizedException, BlogException {
+		try {
+			Blog blog = blogDAO.get(blogId);
+			if(blog == null) {
+				throw new BlogNotFoundException();
+			}
+			User user = userManager.getUser(tocken, userId);
+			if (user == null) {
+				throw new NotAuthorizedException();
+			}
+			blogDAO.delete(blog);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BlogException();
+		}
+		
 	}
 
 	@Override
-	public void deleteBlog(int blogId) throws BlogNotFoundException, NotAuthorizedException, BlogException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Blog[] getBlogs(String blogFilter, int index, int count) throws BlogException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getBlogCount() throws BlogException {
-		// TODO Auto-generated method stub
-		return 0;
+	public List<Blog> getBlogs(String blogFilter, int index, int count) throws BlogException {
+		List<Blog> blogs = null;
+		try {
+			blogs = blogDAO.getMultiple(blogFilter, index, count);
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new BlogException();
+		}
+		return blogs;
 	}
 
 }

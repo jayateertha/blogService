@@ -1,11 +1,6 @@
 package com.cisco.cmad.blogservice.api;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-@Entity
 public class Session {
-	@Id
 	private String userName;
 	
 	private String tocken;

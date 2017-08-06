@@ -1,5 +1,7 @@
 package com.cisco.cmad.blogservice.impl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import com.cisco.cmad.blogservice.api.Credentials;
@@ -16,7 +18,8 @@ import com.cisco.cmad.blogservice.dao.jpa.JPAUserDAO;
 
 public class UserManagerImpl implements UserManager {
 
-	UserDAO userDAO = new JPAUserDAO();
+	static UserDAO userDAO = new JPAUserDAO();
+	static Map<String, Session> sessionMap = new HashMap<String, Session>();
 
 	@Override
 	public User register(User user) throws DuplicateUserException, InvalidUserException, UserException {
@@ -54,12 +57,8 @@ public class UserManagerImpl implements UserManager {
 				session = new Session();
 				session.setTocken(tocken);
 				session.setUserName(credentials.getEmailId());
-				boolean sessionCreated = userDAO.createSession(session);
-				if (sessionCreated) {
-					return session;
-				} else {
-					throw new UserException();
-				}
+				UserManagerImpl.sessionMap.put(tocken, session);
+				return session;
 			} else {
 				System.out.println("Auth failed");
 				throw new InvalidUserException();
@@ -74,14 +73,14 @@ public class UserManagerImpl implements UserManager {
 	public void logout(String tocken, Credentials credentials)
 			throws InvalidUserException, NotAuthorizedException, UserException {
 		try {
-			Session session = userDAO.getSession(credentials.getEmailId());
+			Session session = UserManagerImpl.sessionMap.get(tocken);
 			if ((session == null) || (!session.getTocken().equals(tocken))) {
 				throw new NotAuthorizedException();
 			}
 			if (credentials.getEmailId().isEmpty()) {
 				throw new InvalidUserException();
 			}
-			userDAO.deleteSession(credentials.getEmailId());
+			UserManagerImpl.sessionMap.remove(tocken);
 		} catch (Exception e) {
 			throw new UserException();
 		}
@@ -98,10 +97,10 @@ public class UserManagerImpl implements UserManager {
 			throws UserNotFoundException, NotAuthorizedException, UserException {
 		User user = null;
 		try {
-			//System.out.println("userId:" + userId);
-			Session session = userDAO.getSession(userId);
-			//System.out.println("tocken:" + tocken);
-			//System.out.println("Session:" + session);
+			System.out.println("userId:" + userId);
+			Session session = UserManagerImpl.sessionMap.get(tocken);
+			System.out.println("tocken:" + tocken);
+			System.out.println("Session:" + session);
 			if ((session == null) || (!session.getTocken().equals(tocken))) {
 				throw new NotAuthorizedException();
 			}
@@ -123,7 +122,7 @@ public class UserManagerImpl implements UserManager {
 		if (user.getContactNo().trim().isEmpty() || user.getEmailId().trim().isEmpty()) {
 			throw new InvalidUserException();
 		}
-		Session session = userDAO.getSession(user.getEmailId());
+		Session session = UserManagerImpl.sessionMap.get(tocken);
 		if ((session == null) || (!session.getTocken().equals(tocken))) {
 			throw new NotAuthorizedException();
 		}
@@ -131,9 +130,14 @@ public class UserManagerImpl implements UserManager {
 		if (existingUser == null) {
 			throw new UserNotFoundException();
 		}
-		existingUser.setContactNo(user.getContactNo());
-		userDAO.update(user);
-		return existingUser;
+		try {
+			existingUser.setContactNo(user.getContactNo());
+			userDAO.update(user);
+		} catch (Exception e) {
+			throw new UserException();
+		}
+		
+		return user;
 	}
 
 }

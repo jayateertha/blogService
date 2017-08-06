@@ -50,7 +50,7 @@ public class UserManagerAPI {
 			return Response.status(500).build();
 		}
 
-		return Response.status(200).entity(createdUser).build();
+		return Response.status(201).entity(createdUser).build();
 
 	}
 
@@ -178,5 +178,5 @@ public class UserManagerAPI {
 
 		return Response.status(200).entity(credentials).build();
 	}
-
+	
 }

@@ -2,16 +2,14 @@ package com.cisco.cmad.blogservice.dao.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import com.cisco.cmad.blogservice.api.Credentials;
-import com.cisco.cmad.blogservice.api.Session;
 import com.cisco.cmad.blogservice.api.User;
 import com.cisco.cmad.blogservice.dao.api.UserDAO;
 
 public class JPAUserDAO implements UserDAO {
 
-	private static EntityManagerFactory factory = Persistence.createEntityManagerFactory("blogService");
+	private EntityManagerFactory factory = JPAEntityManager.getInstance();
 
 	@Override
 	public User create(User user) {
@@ -53,24 +51,6 @@ public class JPAUserDAO implements UserDAO {
 	}
 
 	@Override
-	public Session getSession(String userName) {
-		EntityManager em = factory.createEntityManager();
-		Session session = em.find(Session.class, userName);
-		em.close();
-		return session;
-	}
-
-	@Override
-	public boolean createSession(Session session) {
-		EntityManager em = factory.createEntityManager();
-		em.getTransaction().begin();
-		em.persist(session);
-		em.getTransaction().commit();
-		em.close();
-		return true;
-	}
-
-	@Override
 	public boolean isValid(Credentials credentials) {
 		EntityManager em = factory.createEntityManager();
 		Credentials creds = em.find(Credentials.class, credentials.getEmailId());
@@ -79,19 +59,6 @@ public class JPAUserDAO implements UserDAO {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public boolean deleteSession(String userId) {
-		EntityManager em = factory.createEntityManager();
-		Session session = (Session) em.find(Session.class, userId);
-		if (session != null) {
-			em.getTransaction().begin();
-			em.remove(session);
-			em.getTransaction().commit();
-		}
-		em.close();
-		return true;
 	}
 
 }
