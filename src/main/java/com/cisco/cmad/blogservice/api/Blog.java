@@ -21,6 +21,16 @@ public class Blog {
 	@Column(nullable=false)
 	private String name;
 	
+	private String Category;
+	
+	public String getCategory() {
+		return Category;
+	}
+
+	public void setCategory(String category) {
+		Category = category;
+	}
+
 	private String data;
 
 	@ManyToOne(cascade=CascadeType.ALL)

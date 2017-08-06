@@ -98,10 +98,10 @@ public class UserManagerImpl implements UserManager {
 			throws UserNotFoundException, NotAuthorizedException, UserException {
 		User user = null;
 		try {
-			System.out.println("userId:" + userId);
+			//System.out.println("userId:" + userId);
 			Session session = userDAO.getSession(userId);
-			System.out.println("tocken:" + tocken);
-			System.out.println("Session:" + session);
+			//System.out.println("tocken:" + tocken);
+			//System.out.println("Session:" + session);
 			if ((session == null) || (!session.getTocken().equals(tocken))) {
 				throw new NotAuthorizedException();
 			}
