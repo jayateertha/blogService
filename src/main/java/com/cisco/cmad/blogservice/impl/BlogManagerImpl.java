@@ -1,5 +1,6 @@
 package com.cisco.cmad.blogservice.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,9 +36,9 @@ public class BlogManagerImpl implements BlogManager {
 			if (user == null) {
 				throw new NotAuthorizedException();
 			}
-			blog.setCreated(new Date());
-			blog.setLastModifed(new Date());
-			blog.setUser(user);
+			//blog.setCreated(new Date());
+			//blog.setLastModifed(new Date());
+			//blog.setUser(user);
 			createdBlog = blogDAO.create(blog);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -65,6 +66,9 @@ public class BlogManagerImpl implements BlogManager {
 	public void deleteBlog(String userId, String tocken, int blogId) throws BlogNotFoundException, NotAuthorizedException, BlogException {
 		try {
 			Blog blog = blogDAO.get(blogId);
+			System.out.println("In delete blog implementation");
+			System.out.println(blog.getBlogId());
+			System.out.println("***********************");
 			if(blog == null) {
 				throw new BlogNotFoundException();
 			}
@@ -79,7 +83,7 @@ public class BlogManagerImpl implements BlogManager {
 		}
 		
 	}
-
+	
 	@Override
 	public List<Blog> getBlogs(String blogFilter, int index, int count) throws BlogException {
 		List<Blog> blogs = null;
@@ -90,6 +94,63 @@ public class BlogManagerImpl implements BlogManager {
 			throw new BlogException();
 		}
 		return blogs;
+	}
+	
+    @Override
+    public List<Blog> readByCategory(String category, int pageNum) throws BlogException {
+        List<Blog> blogs = new ArrayList<Blog>();
+        try {
+            blogs = blogDAO.readByCategory(category, pageNum);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BlogException();
+        }
+
+        if (blogs == null || blogs.isEmpty())
+            throw new BlogException();
+        return blogs;
+    }
+
+    @Override
+    public List<Blog> readAllBlogs(int pageNum) throws BlogException {
+        List<Blog> blogs = new ArrayList<Blog>();
+        try {
+            blogs = blogDAO.readAllBlogs(pageNum);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BlogException();
+        }
+
+        if (blogs == null || blogs.isEmpty())
+            throw new BlogException();
+        return blogs;
+    }
+
+	@Override
+	public Blog updateBlog(String userId, String tocken, Blog blog) {
+		if (blog == null) {
+			throw new InvalidBlogException();
+		}
+		if (((blog.getData() == null) || (blog.getData().trim().isEmpty()))
+				|| ((blog.getName() == null) || (blog.getName().trim().isEmpty()))) {
+			throw new InvalidBlogException();
+		}
+		Blog createdBlog = null;
+		try {
+			User user = userManager.getUser(tocken, userId);
+			if (user == null) {
+				throw new NotAuthorizedException();
+			}
+			//blog.setCreated(new Date());
+			//blog.setLastModifed(new Date());
+			//blog.setUser(user);
+			createdBlog = blogDAO.update(blog);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BlogException();
+		}
+
+		return createdBlog;
 	}
 
 }

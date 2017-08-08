@@ -10,5 +10,7 @@ public interface BlogDAO {
 	public Blog update(Blog blog);
 	public void delete(Blog blog);
 	public List<Blog> getMultiple(String filter, int index, int count);
+	List<Blog> readByCategory(String category, int pageNum);
+	List<Blog> readAllBlogs(int pageNum);
 	
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 
 import com.cisco.cmad.blogservice.api.Blog;
 import com.cisco.cmad.blogservice.dao.api.BlogDAO;
@@ -45,14 +46,14 @@ public class JPABlogDAO implements BlogDAO {
 	@Override
 	public void delete(Blog blog) {
 		EntityManager em = factory.createEntityManager();
-		Blog existingBlog = (Blog) em.find(Blog.class, blog.getBlogId());
+		Blog existingBlog = em.find(Blog.class, blog.getBlogId());
 		if (existingBlog != null) {
 			em.getTransaction().begin();
-			em.remove(blog);
+			existingBlog = em.find(Blog.class, blog.getBlogId());
+			em.remove(existingBlog);
 			em.getTransaction().commit();
 		}
 		em.close();
-
 	}
 
 	@Override
@@ -98,5 +99,42 @@ public class JPABlogDAO implements BlogDAO {
 				.setFirstResult(startCount).getResultList();
 		return blogs;
 	}
+	
+    @Override
+    // Search blogs by category
+    // @pageNum - 0 based page index
+    public List<Blog> readByCategory(String category, int pageNum) {
+        EntityManager em = factory.createEntityManager();
+        em.getTransaction().begin();
+        TypedQuery<Blog> tquery = em.createNamedQuery(Blog.FIND_BY_CATEGORY, Blog.class);
+        tquery.setParameter("category", category);
+        setPageParams(tquery, pageNum);
+        List<Blog> blogs = tquery.getResultList();
+        em.getTransaction().commit();
+        em.close();
+        return blogs;
+    }
+
+    @Override
+    // Read all blogs
+    // @pageNum - 0 based page index
+    public List<Blog> readAllBlogs(int pageNum) {
+        EntityManager em = factory.createEntityManager();
+        em.getTransaction().begin();
+        TypedQuery<Blog> tquery = em.createNamedQuery(Blog.FIND_ALL, Blog.class);
+        setPageParams(tquery, pageNum);
+        List<Blog> blogs = tquery.getResultList();
+        em.getTransaction().commit();
+        em.close();
+        return blogs;
+    }
+    
+    private void setPageParams(TypedQuery<Blog> tquery, int pageNum) {
+        tquery.setMaxResults(5);
+        int index = pageNum * 5;
+        tquery.setFirstResult(index);
+    }
+
+
 
 }

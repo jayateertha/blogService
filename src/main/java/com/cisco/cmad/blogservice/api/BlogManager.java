@@ -14,4 +14,10 @@ public interface BlogManager {
 
 	public List<Blog> getBlogs(String blogFilter, int index, int count) throws BlogException;
 
+	List<Blog> readByCategory(String category, int pageNum) throws BlogException;
+
+	List<Blog> readAllBlogs(int pageNum) throws BlogException;
+
+	public Blog updateBlog(String userId, String tocken, Blog blog);
+
 }
