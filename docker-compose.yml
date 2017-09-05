@@ -1,11 +1,7 @@
 app:
-  image: sirnoorkar/demo:v0.1.0
+  image: nsshayan/blogService:staging
   links:
     - db:db
   ports:
-    - 9999:8080
-
-db:
-  image: mysql:latest
-  environment:
-    - MYSQL_ROOT_PASSWORD=password
+    - 8888:8080
+  container_name: tomcat

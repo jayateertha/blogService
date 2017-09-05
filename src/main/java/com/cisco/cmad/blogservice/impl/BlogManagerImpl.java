@@ -65,17 +65,23 @@ public class BlogManagerImpl implements BlogManager {
 	@Override
 	public void deleteBlog(String userId, String tocken, int blogId) throws BlogNotFoundException, NotAuthorizedException, BlogException {
 		try {
+			
 			Blog blog = blogDAO.get(blogId);
-			System.out.println("In delete blog implementation");
-			System.out.println(blog.getBlogId());
-			System.out.println("***********************");
 			if(blog == null) {
 				throw new BlogNotFoundException();
 			}
+			System.out.println("In delete blog implementation");
+			System.out.println(blog.getBlogId());
+			System.out.println("***********************");
+			
 			User user = userManager.getUser(tocken, userId);
 			if (user == null) {
 				throw new NotAuthorizedException();
 			}
+			
+			if(!blog.getUser().getEmailId().equals(userId))
+				throw new NotAuthorizedException();
+			
 			blogDAO.delete(blog);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -121,9 +127,9 @@ public class BlogManagerImpl implements BlogManager {
             throw new BlogException();
         }
 
-        if (blogs == null || blogs.isEmpty())
+/*        if (blogs == null || blogs.isEmpty())
             throw new BlogException();
-        return blogs;
+*/        return blogs;
     }
 
 	@Override

@@ -1,4 +1,4 @@
-package com.cisco.cmad.blogservice.api;
+	package com.cisco.cmad.blogservice.api;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
