@@ -1,5 +1,5 @@
 app:
-  image: nsshayan/blogService:staging
+  image: nsshayan/blogservice:staging
   ports:
     - 8888:8080
   container_name: tomcat
